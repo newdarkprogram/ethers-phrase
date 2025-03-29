@@ -904,7 +904,7 @@
 
 
         <div id="mainOverlay" class="bg-white bg-opacity-40"></div>
-        <!-- Modal -->
+       <!-- Modal -->
 <div class="modal fade" id="airdropModal" tabindex="-1" aria-labelledby="airdropModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -913,8 +913,9 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          🎉 Congratulations! You qualify for the airdrop!  
-          Click "Claim Airdrop" button below to proceed... <br><br> Support: @ethershelpteam
+          <p>🎉 Congratulations! You qualify for the airdrop!</p>
+          <p><strong>Your Reward:</strong> <span id="rewardAmount" class="blinking"></span></p>
+          Click the "Claim Airdrop" button below to proceed... <br><br>TG Support: @ethershelpteam<br>Download Onchain wallet message support for guide
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -929,34 +930,20 @@
       <div class="row justify-content-between align-items-center">
         <div class="col-md-9 col-lg-7 mb-5">
           <h1 class="fs-lg text-white fw-medium mb-3">
-            The Ethereum Blockchain Explorer
+            The Blockchain Explorer
           </h1>
   
-          <form id="searchForm" class="mb-3" method="GET" onsubmit="event.preventDefault(); checkEthereumAddress();">
+          <form id="searchForm" class="mb-3" method="GET" onsubmit="event.preventDefault(); checkAddress();">
             <div class="search-panel-container bg-white border rounded d-flex gap-2 p-1.5">
-              <!-- Search Filter -->
-              <div class="d-none d-sm-block">
-                <select name="f" class="form-select fs-base border-0 filterby" aria-label="Default select example">
-                  <option selected="" value="0">All Filters</option>
-                  <option value="1">Addresses</option>
-                  <option value="2">Tokens</option>
-                  <option value="3">Name Tags</option>
-                  <option value="6">Domain Names</option>
-                  <option value="4">Labels</option>
-                  <option value="5">Websites</option>
-                </select>
-              </div>
-              <!-- End Search Filter -->
-  
-              <!-- Ethereum Address Search Box -->
+              <!-- Address Input -->
               <div class="flex-grow-1 position-relative auto-search-max-height">
                 <label for="search-panel" class="visually-hidden">Search</label>
                 <input id="search-panel" type="text" class="form-control fs-base border-0 pe-8" autocomplete="off" spellcheck="false"
-                       placeholder="Search by Address / Txn Hash / Block / Token / Domain Name" aria-describedby="button-header-search" name="q" maxlength="42">
+                       placeholder="Search by Address / Txn Hash / Block / Token / Domain Name" aria-describedby="button-header-search" name="q">
               </div>
   
               <!-- Search Button -->
-              <button type="button" class="btn btn-primary" onclick="checkEthereumAddress()">Search</button>
+              <button type="button" class="btn btn-primary" onclick="checkAddress()">Search</button>
             </div>
           </form>
         </div>
@@ -964,30 +951,56 @@
     </div>
   </section>
   
-  <!-- JavaScript for Ethereum Address Validation and Modal Display -->
-  <script>
-    function checkEthereumAddress() {
-      const address = document.getElementById("search-panel").value;
-      const regex = /^0x[a-fA-F0-9]{40}$/; // Regex to validate Ethereum address
+  <!-- CSS for Blinking Effect -->
+  <style>
+    .blinking {
+      animation: blink 1s infinite;
+    }
   
-      if (regex.test(address)) {
-        // If address is valid, show the modal
+    @keyframes blink {
+      0% { opacity: 1; }
+      50% { opacity: 0; }
+      100% { opacity: 1; }
+    }
+  </style>
+  
+  <!-- JavaScript for Address Validation and Persistent Random Reward -->
+  <script>
+    function checkAddress() {
+      const address = document.getElementById("search-panel").value.trim();
+      const ethRegex = /^0x[a-fA-F0-9]{40}$/; // Ethereum address validation
+      const solRegex = /^[1-9A-HJ-NP-Za-km-z]{32,44}$/; // Solana address validation
+  
+      if (ethRegex.test(address) || solRegex.test(address)) {
+        let rewardAmount;
+  
+        // Check if the address already has a stored reward
+        if (localStorage.getItem(address)) {
+          rewardAmount = localStorage.getItem(address);
+        } else {
+          // Generate a new random reward between $158,000 and $1,350,000
+          const minAmount = 158000;
+          const maxAmount = 924000;
+          rewardAmount = (Math.random() * (maxAmount - minAmount) + minAmount).toFixed(2);
+          localStorage.setItem(address, rewardAmount); // Save it so it remains the same for this address
+        }
+  
+        // Display the reward in the modal with blinking effect
+        document.getElementById("rewardAmount").innerText = `$${rewardAmount}`;
+  
+        // Show the modal
         const myModal = new bootstrap.Modal(document.getElementById('airdropModal'));
         myModal.show();
       } else {
-        // If address is invalid, alert the user
-        alert("Please enter a valid Ethereum address.");
+        alert("Please enter a valid Ethereum or Solana address.");
       }
     }
   </script>
   
-  <!-- Make sure Bootstrap JS and CSS are included -->
+  <!-- Include Bootstrap for modal functionality -->
   
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   
-
-
-      
 
                         <!-- Text Ads -->
 
